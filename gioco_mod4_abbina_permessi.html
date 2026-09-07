@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>MOD4 – Abbina: Permessi delle Estensioni del Browser</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{background:linear-gradient(135deg,#0d47a1,#1565c0,#1976d2);min-height:100vh;overflow:hidden;display:flex;justify-content:center;align-items:center}
+.container{width:800px;height:550px;background:#fff;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden;display:flex;flex-direction:column}
+.header{background:linear-gradient(135deg,#0d47a1,#1565c0);color:#fff;padding:11px 18px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.header h1{font-size:15px;font-weight:700}.header p{font-size:11px;opacity:.8;margin-top:1px}
+button{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s;font-family:inherit}
+.btn-white{background:#fff;color:#0d47a1}.btn-white:hover{background:#e3f2fd}
+.btn-outline{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4)}.btn-outline:hover{background:rgba(255,255,255,.25)}
+.btn-group{display:flex;gap:8px}
+.hidden{display:none!important}
+.page{flex:1;display:flex;flex-direction:column;min-height:0}
+
+/* Intro */
+.instr{padding:18px 26px;overflow-y:auto;flex:1}
+.instr h2{font-size:22px;color:#0d47a1;margin-bottom:10px}
+.instr p{font-size:16px;line-height:1.6;color:#444;margin-bottom:8px}
+.how-grid{display:flex;gap:10px;margin:14px 0}
+.how-step{flex:1;background:#e3f2fd;border-radius:8px;padding:10px;text-align:center;font-size:16px;color:#0d47a1;font-weight:600;line-height:1.5}
+.how-step .num{font-size:22px;display:block;margin-bottom:4px}
+.start-btn{background:linear-gradient(135deg,#0d47a1,#1565c0);color:#fff;padding:11px 32px;font-size:16px;border-radius:8px;display:block;margin:16px auto 0;cursor:pointer;border:none;font-weight:600}
+.start-btn:hover{transform:translateY(-2px)}
+
+/* Game */
+.status-bar{display:flex;align-items:center;gap:16px;padding:7px 14px;background:#f5f5f5;border-bottom:1px solid #e0e0e0;flex-shrink:0;font-size:14px;color:#555}
+.found-badge{background:#0d47a1;color:#fff;border-radius:20px;padding:2px 12px;font-size:12px;font-weight:700}
+.content{flex:1;display:flex;overflow:hidden;min-height:0;gap:0}
+.pool-col{flex:1;padding:10px 12px;overflow-y:auto;border-right:1px solid #e0e0e0;background:#fafafa;display:flex;flex-direction:column;gap:6px}
+.pool-col h2{font-size:12px;font-weight:700;color:#0d47a1;margin-bottom:2px}
+.chip{background:#fff;border:2px solid #90caf9;border-radius:8px;padding:8px 10px;font-size:13px;color:#333;line-height:1.4;cursor:grab;transition:all .15s}
+.chip:hover{border-color:#1565c0;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.chip.selected{border-color:#0d47a1;background:#e3f2fd;box-shadow:0 0 0 2px #0d47a1 inset}
+.chip.dragging{opacity:.4}
+.bins-col{flex:1.15;display:flex;flex-direction:column;gap:8px;padding:10px 12px}
+.bin{flex:1;border:3px dashed #bbb;border-radius:10px;padding:8px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;transition:all .15s}
+.bin-safe{border-color:#66bb6a;background:#f1f8f1}
+.bin-danger{border-color:#ef5350;background:#fef2f2}
+.bin.drag-over{box-shadow:0 0 0 3px rgba(0,0,0,.15) inset}
+.bin-title{font-size:11.5px;font-weight:700;margin-bottom:2px;flex-shrink:0}
+.bin-safe .bin-title{color:#2e7d32}
+.bin-danger .bin-title{color:#c62828}
+.bin-item{background:#fff;border-radius:6px;padding:6px 8px;font-size:12px;line-height:1.35;border-left:4px solid #999}
+.bin-safe .bin-item{border-left-color:#2e7d32}
+.bin-danger .bin-item{border-left-color:#c62828}
+.flash-wrong{animation:flashWrong .4s}
+@keyframes flashWrong{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 3px #ef5350 inset}}
+
+/* Result */
+.result{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#0d47a1,#1565c0)}
+.result h2{color:#fff;font-size:24px;font-weight:700}
+.result .emoji{font-size:54px}
+.result p{color:#bbdefb;font-size:18px;text-align:center;max-width:420px;line-height:1.6}
+.result-stats{display:flex;gap:10px}
+.result-stat{background:rgba(255,255,255,.15);border-radius:8px;padding:8px 18px;color:#fff;font-size:18px;font-weight:700;text-align:center}
+.result-stat span{display:block;font-size:18px;opacity:.8;margin-bottom:2px}
+.btn-again{background:#fff;color:#0d47a1;padding:9px 26px;font-size:13px;border-radius:8px;font-weight:700;margin-top:4px;cursor:pointer;border:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div><h1>🧩 Abbina – Permessi delle Estensioni del Browser</h1><p>Modulo 4 – Furto sessioni browser ed estensioni custom</p></div>
+    <div class="btn-group">
+      <button class="btn-outline" onclick="resetGame()">🔄 Rigioca</button>
+      <button class="btn-white" onclick="window.close()">Torna al corso</button>
+    </div>
+  </div>
+
+  <div id="instrPage" class="page">
+    <div class="instr">
+      <h2>Ogni estensione chiede dei permessi: sai leggerli?</h2>
+      <p>Quando installi un'estensione del browser, ti chiede il permesso di fare determinate cose. Alcuni permessi sono innocui, altri aprono la porta al furto di sessioni, password e dati di navigazione.</p>
+      <p>Trascina ciascuno dei 10 permessi qui sotto nella colonna corretta: rischio basso o rischio alto.</p>
+      <div class="how-grid">
+        <div class="how-step"><span class="num">📋</span>Leggi il permesso a sinistra</div>
+        <div class="how-step"><span class="num">✋</span>Trascinalo nella colonna giusta (o clicca, poi clicca la colonna)</div>
+        <div class="how-step"><span class="num">🔁</span>Se sbagli, il permesso torna disponibile: riprova</div>
+      </div>
+      <button class="start-btn" onclick="startGame()">▶ Inizia</button>
+    </div>
+  </div>
+
+  <div id="gamePage" class="page hidden">
+    <div class="status-bar">
+      <span class="found-badge">Corretti: <span id="correctCount">0</span>/10</span>
+      <span>Errori: <b id="errCount" style="color:#c62828">0</b></span>
+      <span style="margin-left:auto;font-size:11px;color:#888">Trascina o seleziona un permesso, poi scegli la colonna</span>
+    </div>
+    <div class="content">
+      <div class="pool-col" id="poolCol">
+        <h2>📥 Permessi da classificare</h2>
+      </div>
+      <div class="bins-col">
+        <div class="bin bin-safe" id="binSafe" data-bin="safe">
+          <div class="bin-title">✅ Rischio basso</div>
+        </div>
+        <div class="bin bin-danger" id="binDanger" data-bin="danger">
+          <div class="bin-title">⚠️ Rischio alto</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultPage" class="page hidden">
+    <div class="result">
+      <div class="emoji" id="resEmoji">🏆</div>
+      <h2 id="resTitle">Ottimo lavoro!</h2>
+      <p id="resText">Hai classificato correttamente i permessi.</p>
+      <div class="result-stats">
+        <div class="result-stat"><span>Corretti</span><span id="resCorrect">0/10</span></div>
+        <div class="result-stat"><span>Errori</span><span id="resErr">0</span></div>
+      </div>
+      <button class="btn-again" onclick="resetGame()">🔄 Rigioca</button>
+    </div>
+  </div>
+</div>
+<script>
+const PERMS=[
+  {id:1,text:"Leggere e modificare tutti i dati sui siti che visiti",risk:"danger"},
+  {id:2,text:"Accedere ai cookie di sessione dei siti aperti",risk:"danger"},
+  {id:3,text:"Leggere la cronologia di navigazione completa",risk:"danger"},
+  {id:4,text:"Catturare screenshot di qualsiasi pagina aperta",risk:"danger"},
+  {id:5,text:"Intercettare e modificare le richieste di rete",risk:"danger"},
+  {id:6,text:"Cambiare il tema grafico e i colori del browser",risk:"safe"},
+  {id:7,text:"Mostrare una notifica desktop quando serve",risk:"safe"},
+  {id:8,text:"Salvare le tue preferenze sul tuo dispositivo",risk:"safe"},
+  {id:9,text:"Aggiungere una voce al menu del tasto destro",risk:"safe"},
+  {id:10,text:"Accedere agli appunti quando lo autorizzi esplicitamente",risk:"safe"},
+];
+
+let placed={},correct=0,errors=0,selectedId=null;
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function startGame(){
+  document.getElementById('instrPage').classList.add('hidden');
+  document.getElementById('gamePage').classList.remove('hidden');
+  initGame();
+}
+function initGame(){
+  placed={};correct=0;errors=0;selectedId=null;
+  document.getElementById('correctCount').textContent='0';
+  document.getElementById('errCount').textContent='0';
+  document.querySelectorAll('.bin').forEach(b=>{
+    const title=b.querySelector('.bin-title');
+    b.innerHTML='';b.appendChild(title);
+  });
+  renderPool();
+  setupBins();
+}
+function renderPool(){
+  const pool=document.getElementById('poolCol');
+  pool.querySelectorAll('.chip').forEach(c=>c.remove());
+  const order=shuffle(PERMS.filter(p=>!placed[p.id]));
+  order.forEach(p=>{
+    const c=document.createElement('div');
+    c.className='chip';
+    c.textContent=p.text;
+    c.draggable=true;
+    c.dataset.id=p.id;
+    c.onclick=()=>selectChip(p.id,c);
+    c.addEventListener('dragstart',e=>{c.classList.add('dragging');e.dataTransfer.setData('text/plain',p.id);});
+    c.addEventListener('dragend',()=>c.classList.remove('dragging'));
+    pool.appendChild(c);
+  });
+}
+function selectChip(id,el){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+  if(selectedId===id){selectedId=null;return;}
+  selectedId=id;
+  el.classList.add('selected');
+}
+function setupBins(){
+  ['binSafe','binDanger'].forEach(binId=>{
+    const bin=document.getElementById(binId);
+    bin.addEventListener('dragover',e=>{e.preventDefault();bin.classList.add('drag-over');});
+    bin.addEventListener('dragleave',()=>bin.classList.remove('drag-over'));
+    bin.addEventListener('drop',e=>{
+      e.preventDefault();bin.classList.remove('drag-over');
+      const id=parseInt(e.dataTransfer.getData('text/plain'));
+      if(id)handleDrop(id,bin.dataset.bin,bin);
+    });
+    bin.addEventListener('click',()=>{
+      if(selectedId!==null){handleDrop(selectedId,bin.dataset.bin,bin);selectedId=null;}
+    });
+  });
+}
+function handleDrop(id,binKey,binEl){
+  const perm=PERMS.find(p=>p.id===id);
+  if(!perm||placed[id])return;
+  if(perm.risk===binKey){
+    placed[id]=true;correct++;
+    document.getElementById('correctCount').textContent=correct;
+    const item=document.createElement('div');
+    item.className='bin-item';
+    item.textContent=perm.text;
+    binEl.appendChild(item);
+    document.querySelector('.chip[data-id="'+id+'"]')?.remove();
+    if(correct===PERMS.length)setTimeout(endGame,300);
+  }else{
+    errors++;
+    document.getElementById('errCount').textContent=errors;
+    binEl.classList.add('flash-wrong');
+    setTimeout(()=>binEl.classList.remove('flash-wrong'),400);
+  }
+}
+function endGame(){
+  const pct=correct/PERMS.length;
+  document.getElementById('resCorrect').textContent=correct+'/'+PERMS.length;
+  document.getElementById('resErr').textContent=errors;
+  const emojiEl=document.getElementById('resEmoji'),titleEl=document.getElementById('resTitle'),textEl=document.getElementById('resText');
+  if(pct>=0.8){
+    emojiEl.textContent='🏆';titleEl.textContent='Ottimo lavoro!';
+    textEl.textContent="Sai distinguere un permesso innocuo da uno che apre la porta al furto di sessione. Prima di installare un'estensione, leggi sempre cosa ti chiede di fare.";
+  }else if(pct>=0.5){
+    emojiEl.textContent='👍';titleEl.textContent='Buon lavoro';
+    textEl.textContent="Alcuni permessi ti hanno tratto in inganno. Un permesso che legge o modifica i dati di tutti i siti visitati è quasi sempre ad alto rischio, qualunque sia lo scopo dichiarato dell'estensione.";
+  }else{
+    emojiEl.textContent='💪';titleEl.textContent='Riprova';
+    textEl.textContent="Rigioca e presta attenzione ai verbi usati nei permessi: leggere, modificare, intercettare dati su tutti i siti sono segnali di rischio alto.";
+  }
+  document.getElementById('gamePage').classList.add('hidden');
+  document.getElementById('resultPage').classList.remove('hidden');
+}
+function resetGame(){
+  document.getElementById('resultPage').classList.add('hidden');
+  document.getElementById('gamePage').classList.add('hidden');
+  document.getElementById('instrPage').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
